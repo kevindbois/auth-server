@@ -15,13 +15,13 @@ public class JwtService {
 
     private final RsaKeyConfig rsaKeyConfig;
 
-    public String generateToken(User user) {
+    public String generateToken(User user) throws Exception {
         return Jwts.builder()
                 .subject(user.getUsername())
                 .claim("roles", user.getRoles())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
-                .signWith(rsaKeyConfig.getPrivateKey())
+                .signWith(rsaKeyConfig.buildPrivateKey())
                 .compact();
     }
 }
