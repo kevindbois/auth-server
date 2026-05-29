@@ -35,6 +35,13 @@ public class AuthController {
         return ResponseEntity.ok(token);
     }
 
+    @PostMapping("/register/admin")
+    public ResponseEntity<String> registerAdmin(@RequestBody RegisterRequest request) {
+        authService.createAdmin(request);
+        return ResponseEntity.ok("Admin registered successfully");
+    }
+
+
 
     @GetMapping("/jwks")
     public ResponseEntity<Map<String, Object>> jwks() throws Exception {
