@@ -34,3 +34,4 @@ jobs:
           context: .
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/auth-server:latest
+          no-cache: true
