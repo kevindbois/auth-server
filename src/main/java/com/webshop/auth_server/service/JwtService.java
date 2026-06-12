@@ -17,6 +17,7 @@ public class JwtService {
 
     public String generateToken(User user) throws Exception {
         return Jwts.builder()
+                .header().add("kid", "auth-server-key").and()
                 .subject(user.getUsername())
                 .claim("roles", user.getRoles())
                 .issuedAt(new Date())
