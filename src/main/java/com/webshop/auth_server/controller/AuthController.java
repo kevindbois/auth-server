@@ -41,6 +41,8 @@ public class AuthController {
         RSAPublicKey publicKey = rsaKeyConfig.buildPublicKey();
 
         Map<String, Object> jwk = new HashMap<>();
+        jwk.put("alg", "RSA");
+        jwk.put("kid", "auth-server-key");
         jwk.put("kty", "RSA");
         jwk.put("use", "sig");
         jwk.put("n", Base64.getUrlEncoder().withoutPadding()
