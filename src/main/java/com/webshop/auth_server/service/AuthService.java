@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.HashSet;
+import com.webshop.auth_server.dto.LoginResponse;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import java.util.Set;
 
@@ -36,7 +39,7 @@ public class AuthService {
         userRepository.save(user);
     }
 
-    public String login(LoginRequest request) throws Exception {
+    public LoginResponse login(LoginRequest request) throws Exception {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -44,6 +47,11 @@ public class AuthService {
             throw new RuntimeException("Incorrect password");
         }
 
-        return jwtService.generateToken(user);
+        String token = jwtService.generateToken(user);
+        List<String> roles = user.getRoles().stream()
+                .map(Role::name)
+                .collect(Collectors.toList());
+
+        return new LoginResponse(token, user.getUsername(), roles);
     }
 }

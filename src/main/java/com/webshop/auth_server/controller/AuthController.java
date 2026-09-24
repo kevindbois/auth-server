@@ -8,6 +8,7 @@ import com.webshop.auth_server.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.webshop.auth_server.dto.LoginResponse;
 
 import java.security.interfaces.RSAPublicKey;
 import java.util.Base64;
@@ -30,9 +31,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login (@RequestBody LoginRequest request) throws Exception {
-        String token = authService.login(request);
-        return ResponseEntity.ok(token);
+    public ResponseEntity<LoginResponse> login (@RequestBody LoginRequest request) throws Exception {
+        LoginResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
     }
 
 
