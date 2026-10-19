@@ -21,6 +21,9 @@ jobs:
 
       - name: Build with Maven
         run: mvn -B package --file pom.xml
+        env:
+          RSA_PUBLIC_KEY: ${{secrets.RSA_PUBLIC_KEY }}
+          RSA_PRIVATE_KEY: ${{ secrets.RSA_PRIVATE_KEY }}
 
       - name: Log in to DockerHub
         uses: docker/login-action@v3
