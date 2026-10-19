@@ -1,6 +1,9 @@
 package com.webshop.auth_server.controller;
 
 
+import com.webshop.auth_server.dto.MeResponse;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import com.webshop.auth_server.config.RsaKeyConfig;
 import com.webshop.auth_server.dto.LoginRequest;
 import com.webshop.auth_server.dto.RegisterRequest;
@@ -34,6 +37,14 @@ public class AuthController {
     public ResponseEntity<LoginResponse> login (@RequestBody LoginRequest request) throws Exception {
         LoginResponse response = authService.login(request);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<MeResponse> me(@AuthenticationPrincipal Jwt jwt) {
+        return ResponseEntity.ok(new MeResponse(
+                jwt.getSubject(),
+                jwt.getClaimAsStringList("roles")
+        ));
     }
 
 
