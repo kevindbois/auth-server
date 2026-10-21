@@ -13,6 +13,8 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtService {
 
+    public static final long EXPIRATION_SECONDS = 60 * 60 * 24; // 24 timmar
+
     private final RsaKeyConfig rsaKeyConfig;
 
     public String generateToken(User user) throws Exception {
@@ -21,7 +23,7 @@ public class JwtService {
                 .subject(user.getUsername())
                 .claim("roles", user.getRoles())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_SECONDS * 1000))
                 .signWith(rsaKeyConfig.buildPrivateKey())
                 .compact();
     }

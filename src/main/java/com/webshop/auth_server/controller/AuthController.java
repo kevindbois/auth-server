@@ -1,6 +1,7 @@
 package com.webshop.auth_server.controller;
 
-
+import java.time.Duration;
+import java.time.Instant;
 import com.webshop.auth_server.dto.MeResponse;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -41,9 +42,15 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<MeResponse> me(@AuthenticationPrincipal Jwt jwt) {
+        Instant expiresAt = jwt.getExpiresAt();
+        long remainingSeconds = expiresAt != null
+                ? Math.max(0, Duration.between(Instant.now(), expiresAt).getSeconds())
+                : 0;
+
         return ResponseEntity.ok(new MeResponse(
                 jwt.getSubject(),
-                jwt.getClaimAsStringList("roles")
+                jwt.getClaimAsStringList("roles"),
+                remainingSeconds
         ));
     }
 
