@@ -52,6 +52,6 @@ public class AuthService {
                 .map(Role::name)
                 .collect(Collectors.toList());
 
-        return new LoginResponse(token, user.getUsername(), roles);
+        return new LoginResponse(token, user.getUsername(), roles, jwtService.EXPIRATION_SECONDS);
     }
 }
