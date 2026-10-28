@@ -14,6 +14,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 
+
+/**
+ * Skapar ett admin-konto vid start om det inte redan finns.
+ * Inloggningsuppgifterna hämtas från ADMIN_USERNAME och ADMIN_PASSWORD,
+ * så inget lösenord står i koden.
+ */
 @Component
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {

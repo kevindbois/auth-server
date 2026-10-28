@@ -15,6 +15,11 @@ import java.util.stream.Collectors;
 
 import java.util.Set;
 
+
+
+/**
+ * Affärslogik för registrering och inloggning.
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -26,6 +31,13 @@ public class AuthService {
 
 
 
+
+    /**
+     * Skapar en ny användare med rollen USER. Lösenordet hashas med BCrypt innan det sparas.
+     *
+     * @param request användarnamn och lösenord
+     * @throws RuntimeException om användarnamnet redan finns
+     */
     public void register(RegisterRequest request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new RuntimeException("Username already exists");
@@ -39,6 +51,14 @@ public class AuthService {
         userRepository.save(user);
     }
 
+    /**
+     * Kontrollerar användarnamn och lösenord och skapar en JWT om de stämmer.
+     *
+     * @param request användarnamn och lösenord
+     * @return token med användarnamn, roller och livslängd
+     * @throws RuntimeException om användaren inte finns eller lösenordet är fel
+     * @throws Exception om token inte kan signeras
+     */
     public LoginResponse login(LoginRequest request) throws Exception {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
