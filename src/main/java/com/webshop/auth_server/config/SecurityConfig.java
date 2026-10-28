@@ -18,6 +18,17 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+
+/**
+ * Säkerhetsinställningar för auth-servern.
+ * <ul>
+ *   <li>/auth/register, /auth/login och /auth/jwks är öppna eftersom man inte har någon token innan man loggat in.</li>
+ *   <li>/error är öppen så att riktiga felmeddelanden visas i stället för 403.</li>
+ *   <li>Alla andra endpoints kräver en giltig JWT.</li>
+ * </ul>
+ * Tjänsten är stateless, så inga sessioner skapas. CSRF är avstängt eftersom
+ * anropen autentiseras med Bearer-token och inte med cookies.
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -30,7 +41,10 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    //kontrollerar JWT med auth's egen public nyckel
+    /**
+     * Verifierar inkommande tokens med auth-serverns egen publika nyckel.
+     * Tokens med fel signatur eller som har gått ut nekas.
+     */
     @Bean
     public JwtDecoder jwtDecoder() throws Exception {
         return NimbusJwtDecoder.withPublicKey(rsaKeyConfig.buildPublicKey()).build();

@@ -14,6 +14,12 @@ import java.util.Base64;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
+
+/**
+ * Läser in RSA-nycklarna från miljövariablerna RSA_PRIVATE_KEY_VALUE och RSA_PUBLIC_KEY_VALUE.
+ * Nycklarna skickas som PEM-text i stället för filer, så att de kan sättas som secrets
+ * på Render och i GitHub Actions. Den privata nyckeln signerar tokens, och den publika verifierar dem.
+ */
 @ConfigurationProperties(prefix = "rsa")
 public class RsaKeyConfig {
 

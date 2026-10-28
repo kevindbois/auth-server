@@ -20,6 +20,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * REST-endpoints för registrering, inloggning och information om inloggad användare.
+ * Frontend anropar inte controllern direkt, utan alla anrop går via gatewayen.
+ */
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -28,18 +33,44 @@ public class AuthController {
     private final AuthService authService;
     private final RsaKeyConfig rsaKeyConfig;
 
+
+
+    /**
+     * Registrerar en ny användare med rollen USER.
+     *
+     * @param request användarnamn och lösenord
+     * @return 200 OK med ett bekräftelsemeddelande
+     */
     @PostMapping("/register")
     public ResponseEntity<String> register (@RequestBody RegisterRequest request) {
         authService.register(request);
         return ResponseEntity.ok("User registered successfully");
     }
 
+
+
+    /**
+     * Loggar in en användare och returnerar en signerad JWT.
+     *
+     * @param request användarnamn och lösenord
+     * @return token, användarnamn, roller och tokenens livslängd i sekunder
+     * @throws Exception om token inte kan signeras
+     */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login (@RequestBody LoginRequest request) throws Exception {
         LoginResponse response = authService.login(request);
         return ResponseEntity.ok(response);
     }
 
+
+    /**
+     * Returnerar den inloggade användaren utifrån token.
+     * Används av frontend när sidan laddas om, så att användaren förblir inloggad.
+     * remainingSeconds talar om när frontend ska logga ut användaren automatiskt.
+     *
+     * @param jwt verifierad token, injiceras av Spring Security
+     * @return användarnamn, roller och återstående sekunder
+     */
     @GetMapping("/me")
     public ResponseEntity<MeResponse> me(@AuthenticationPrincipal Jwt jwt) {
         Instant expiresAt = jwt.getExpiresAt();
@@ -55,6 +86,14 @@ public class AuthController {
     }
 
 
+
+    /**
+     * Publicerar den publika nyckeln i JWKS-format, så att andra tjänster
+     * kan verifiera tokens utan tillgång till den privata nyckeln.
+     *
+     * @return en JWKS med en RSA-nyckel
+     * @throws Exception om den publika nyckeln inte kan läsas
+     */
     @GetMapping("/jwks")
     public ResponseEntity<Map<String, Object>> jwks() throws Exception {
         RSAPublicKey publicKey = rsaKeyConfig.buildPublicKey();
